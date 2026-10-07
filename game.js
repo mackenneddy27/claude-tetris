@@ -39,6 +39,10 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
+const themeBtn = document.getElementById('theme-toggle');
+
+// Colores del tema activo (se leen de las variables CSS en applyTheme)
+let gridColor, shineColor, ghostAlpha;
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
@@ -163,13 +167,13 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   context.fillStyle = color;
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
   // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
+  context.fillStyle = shineColor;
   context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
   context.globalAlpha = 1;
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+  ctx.strokeStyle = gridColor;
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -199,7 +203,7 @@ function draw() {
   for (let r = 0; r < current.shape.length; r++)
     for (let c = 0; c < current.shape[r].length; c++)
       if (current.shape[r][c])
-        drawBlock(ctx, current.x + c, gy + r, current.shape[r][c], BLOCK, 0.2);
+        drawBlock(ctx, current.x + c, gy + r, current.shape[r][c], BLOCK, ghostAlpha);
 
   // current piece
   for (let r = 0; r < current.shape.length; r++)
@@ -301,4 +305,29 @@ document.addEventListener('keydown', e => {
 
 restartBtn.addEventListener('click', init);
 
+function applyTheme(theme) {
+  const root = document.documentElement;
+  root.dataset.theme = theme;
+  themeBtn.textContent = theme === 'light' ? '🌙 Modo oscuro' : '☀️ Modo claro';
+  const styles = getComputedStyle(root);
+  gridColor = styles.getPropertyValue('--grid').trim();
+  shineColor = styles.getPropertyValue('--block-shine').trim();
+  ghostAlpha = parseFloat(styles.getPropertyValue('--ghost-alpha'));
+  // El loop está detenido en pausa y game over: redibujar manualmente
+  if (current) { draw(); drawNext(); }
+}
+
+function loadTheme() {
+  try { return localStorage.getItem('theme') === 'light' ? 'light' : 'dark'; }
+  catch { return 'dark'; }
+}
+
+themeBtn.addEventListener('click', () => {
+  const theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  try { localStorage.setItem('theme', theme); } catch {}
+  applyTheme(theme);
+  themeBtn.blur(); // evita que Space reactive el botón
+});
+
+applyTheme(loadTheme());
 init();
