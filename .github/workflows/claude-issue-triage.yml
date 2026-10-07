@@ -72,7 +72,15 @@ jobs:
                Si el issue ya tiene labels gestionados que ya no aplican (por ejemplo tras una edición), quítalos.
                No toques ningún label que no esté en esta lista.
             4. Escribe el diagnóstico en el archivo `triage-diagnosis.md` en la raíz del workspace, en español
-               y en Markdown, con exactamente estas secciones:
+               y en GitHub Flavored Markdown (GFM), ya que se publicará tal cual como comentario del issue.
+               Asegúrate de que GitHub lo renderice correctamente:
+               - Usa encabezados `##`/`###`, listas con `-` y negritas con `**`.
+               - Envuelve rutas, funciones y constantes en `backticks` (p. ej. `game.js:120`, `collide()`).
+               - Usa bloques de código con triple backtick e indica el lenguaje (```js, ```css, ```html).
+               - Deja una línea en blanco antes y después de encabezados, listas, tablas y bloques de código.
+               - Si usas tablas, que sean tablas GFM válidas (fila de encabezado + separador `|---|`).
+               - No envuelvas todo el documento en un bloque de código ni uses HTML salvo que sea imprescindible.
+               Usa exactamente estas secciones:
 
                ## 🔍 Diagnóstico automático
                ### Resumen
