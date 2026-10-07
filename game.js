@@ -225,6 +225,7 @@ function drawNext() {
 function endGame() {
   gameOver = true;
   cancelAnimationFrame(animId);
+  draw(); // pinta el estado final, también cuando termina por hard/soft drop
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
   overlay.classList.remove('hidden');
@@ -257,6 +258,8 @@ function loop(ts) {
     }
   }
   draw();
+  // lockPiece() puede haber terminado la partida: no agendar otro frame
+  if (gameOver) return;
   animId = requestAnimationFrame(loop);
 }
 
